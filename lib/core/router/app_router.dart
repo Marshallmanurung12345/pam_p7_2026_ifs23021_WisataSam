@@ -7,6 +7,10 @@ import '../../features/plants/plants_add_screen.dart';
 import '../../features/plants/plants_detail_screen.dart';
 import '../../features/plants/plants_edit_screen.dart';
 import '../../features/plants/plants_screen.dart';
+import '../../features/wisata/wisata_add_screen.dart';
+import '../../features/wisata/wisata_detail_screen.dart';
+import '../../features/wisata/wisata_edit_screen.dart';
+import '../../features/wisata/wisata_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../constants/route_constants.dart';
 import '../../shared/widgets/bottom_nav_widget.dart';
@@ -29,13 +33,17 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const PlantsScreen(),
         ),
         GoRoute(
+          path: RouteConstants.wisata,
+          builder: (context, state) => const WisataScreen(),
+        ),
+        GoRoute(
           path: RouteConstants.profile,
           builder: (context, state) => const ProfileScreen(),
         ),
       ],
     ),
 
-    // Route di luar ShellRoute agar tidak menampilkan BottomNav
+    // Plants routes (di luar ShellRoute — tanpa BottomNav)
     GoRoute(
       path: '/plants/add',
       builder: (context, state) => const PlantsAddScreen(),
@@ -43,7 +51,6 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/plants/:id',
       builder: (context, state) {
-        // ID bertipe String (UUID)
         final id = state.pathParameters['id'] ?? '';
         return PlantsDetailScreen(plantId: id);
       },
@@ -53,6 +60,26 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final id = state.pathParameters['id'] ?? '';
         return PlantsEditScreen(plantId: id);
+      },
+    ),
+
+    // Wisata routes (di luar ShellRoute — tanpa BottomNav)
+    GoRoute(
+      path: '/wisata/add',
+      builder: (context, state) => const WisataAddScreen(),
+    ),
+    GoRoute(
+      path: '/wisata/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id'] ?? '';
+        return WisataDetailScreen(wisataId: id);
+      },
+    ),
+    GoRoute(
+      path: '/wisata/:id/edit',
+      builder: (context, state) {
+        final id = state.pathParameters['id'] ?? '';
+        return WisataEditScreen(wisataId: id);
       },
     ),
   ],

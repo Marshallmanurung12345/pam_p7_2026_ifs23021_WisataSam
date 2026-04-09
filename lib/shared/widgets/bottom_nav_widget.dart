@@ -37,6 +37,12 @@ class BottomNavWidget extends StatelessWidget {
       activeIcon: Icons.eco,
     ),
     _NavItem(
+      label: 'Wisata',
+      route: RouteConstants.wisata,
+      icon: Icons.explore_outlined,
+      activeIcon: Icons.explore,
+    ),
+    _NavItem(
       label: 'Profile',
       route: RouteConstants.profile,
       icon: Icons.person_outline,
@@ -53,8 +59,6 @@ class BottomNavWidget extends StatelessWidget {
     final currentLocation = _getCurrentRoute(context);
     final colorScheme = Theme.of(context).colorScheme;
 
-    // boxShadow harus ada di luar ClipRRect agar tidak terpotong.
-    // ClipRRect hanya membungkus NavigationBar untuk border radius.
     return DecoratedBox(
       decoration: BoxDecoration(
         boxShadow: [
@@ -73,36 +77,36 @@ class BottomNavWidget extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          child: ColoredBox(
-            color: colorScheme.surface,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: NavigationBar(
-                height: 70,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                indicatorColor: Colors.transparent,
-                selectedIndex: _getSelectedIndex(currentLocation),
-                onDestinationSelected: (index) {
-                  context.go(_items[index].route);
-                },
-                destinations: _items.map((item) {
-                  final isSelected =
-                      currentLocation.startsWith(item.route) &&
-                          (item.route == RouteConstants.home
-                              ? currentLocation == RouteConstants.home
-                              : true);
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        child: ColoredBox(
+          color: colorScheme.surface,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: NavigationBar(
+              height: 70,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              indicatorColor: Colors.transparent,
+              selectedIndex: _getSelectedIndex(currentLocation),
+              onDestinationSelected: (index) {
+                context.go(_items[index].route);
+              },
+              destinations: _items.map((item) {
+                final isSelected =
+                    currentLocation.startsWith(item.route) &&
+                        (item.route == RouteConstants.home
+                            ? currentLocation == RouteConstants.home
+                            : true);
 
-                  return NavigationDestination(
-                    key: Key(item.label),
-                    icon: _NavIcon(item: item, isSelected: isSelected),
-                    label: item.label,
-                  );
-                }).toList(),
-              ),
+                return NavigationDestination(
+                  key: Key(item.label),
+                  icon: _NavIcon(item: item, isSelected: isSelected),
+                  label: item.label,
+                );
+              }).toList(),
             ),
-          )
+          ),
+        ),
       ),
     );
   }
@@ -110,7 +114,8 @@ class BottomNavWidget extends StatelessWidget {
   int _getSelectedIndex(String location) {
     if (location == RouteConstants.home) return 0;
     if (location.startsWith(RouteConstants.plants)) return 1;
-    if (location.startsWith(RouteConstants.profile)) return 2;
+    if (location.startsWith(RouteConstants.wisata)) return 2;
+    if (location.startsWith(RouteConstants.profile)) return 3;
     return 0;
   }
 }
