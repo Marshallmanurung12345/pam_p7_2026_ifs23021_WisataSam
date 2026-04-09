@@ -88,9 +88,11 @@ class WisataService {
     String imageFilename = 'image.jpg',
   }) async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisata}');
+    final slug = _generateSlug(nama);
 
     final request = http.MultipartRequest('POST', uri)
       ..fields['nama'] = nama
+      ..fields['slug'] = slug
       ..fields['deskripsi'] = deskripsi
       ..fields['lokasi'] = lokasi
       ..fields['kategori'] = kategori
@@ -143,9 +145,11 @@ class WisataService {
     String imageFilename = 'image.jpg',
   }) async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}');
+    final slug = _generateSlug(nama);
 
     final request = http.MultipartRequest('PUT', uri)
       ..fields['nama'] = nama
+      ..fields['slug'] = slug
       ..fields['deskripsi'] = deskripsi
       ..fields['lokasi'] = lokasi
       ..fields['kategori'] = kategori
@@ -224,6 +228,16 @@ class WisataService {
 
   String _parseSocketException(SocketException error) {
     return 'Tidak bisa terhubung ke backend: ${error.message}';
+  }
+
+  String _generateSlug(String value) {
+    final normalized = value
+        .toLowerCase()
+        .trim()
+        .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
+        .replaceAll(RegExp(r'\s+'), '-')
+        .replaceAll(RegExp(r'-+'), '-');
+    return normalized;
   }
 
   void dispose() => _client.close();

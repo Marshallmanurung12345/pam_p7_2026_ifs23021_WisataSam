@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../core/utils/error_message_formatter.dart';
 import '../data/models/plant_model.dart';
 import '../data/services/plant_repository.dart';
 
@@ -38,7 +39,7 @@ class PlantProvider extends ChangeNotifier {
       _plants = List<PlantModel>.from(result.data!);
       _setStatus(PlantStatus.success);
     } else {
-      _errorMessage = result.message;
+      _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(PlantStatus.error);
     }
   }
@@ -50,7 +51,7 @@ class PlantProvider extends ChangeNotifier {
       _selectedPlant = result.data;
       _setStatus(PlantStatus.success);
     } else {
-      _errorMessage = result.message;
+      _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(PlantStatus.error);
     }
   }
@@ -80,7 +81,7 @@ class PlantProvider extends ChangeNotifier {
       await loadPlants();
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(PlantStatus.error);
     return false;
   }
@@ -113,7 +114,7 @@ class PlantProvider extends ChangeNotifier {
       await loadPlantById(id);
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(PlantStatus.error);
     return false;
   }
@@ -126,7 +127,7 @@ class PlantProvider extends ChangeNotifier {
       _setStatus(PlantStatus.success);
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(PlantStatus.error);
     return false;
   }

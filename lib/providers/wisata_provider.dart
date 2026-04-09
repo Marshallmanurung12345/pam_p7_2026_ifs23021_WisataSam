@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../core/utils/error_message_formatter.dart';
 import '../data/models/wisata_model.dart';
 import '../data/services/wisata_repository.dart';
 
@@ -41,7 +42,7 @@ class WisataProvider extends ChangeNotifier {
       _wisataList = List<WisataModel>.from(result.data!);
       _setStatus(WisataStatus.success);
     } else {
-      _errorMessage = result.message;
+      _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(WisataStatus.error);
     }
   }
@@ -53,7 +54,7 @@ class WisataProvider extends ChangeNotifier {
       _selectedWisata = result.data;
       _setStatus(WisataStatus.success);
     } else {
-      _errorMessage = result.message;
+      _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(WisataStatus.error);
     }
   }
@@ -83,7 +84,7 @@ class WisataProvider extends ChangeNotifier {
       await loadWisata();
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(WisataStatus.error);
     return false;
   }
@@ -115,7 +116,7 @@ class WisataProvider extends ChangeNotifier {
       await loadWisataById(id);
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(WisataStatus.error);
     return false;
   }
@@ -128,7 +129,7 @@ class WisataProvider extends ChangeNotifier {
       _setStatus(WisataStatus.success);
       return true;
     }
-    _errorMessage = result.message;
+    _errorMessage = ErrorMessageFormatter.format(result.message);
     _setStatus(WisataStatus.error);
     return false;
   }
