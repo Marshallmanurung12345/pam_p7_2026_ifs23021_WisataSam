@@ -1,6 +1,7 @@
 // lib/features/wisata/wisata_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/route_constants.dart';
@@ -11,9 +12,14 @@ import '../../shared/widgets/top_app_bar_widget.dart';
 import '../../data/models/wisata_model.dart';
 
 class WisataDetailScreen extends StatefulWidget {
-  const WisataDetailScreen({super.key, required this.wisataId});
+  const WisataDetailScreen({
+    super.key,
+    required this.wisataId,
+    this.initialWisata,
+  });
 
   final String wisataId;
+  final WisataModel? initialWisata;
 
   @override
   State<WisataDetailScreen> createState() => _WisataDetailScreenState();
@@ -24,12 +30,29 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<WisataProvider>().loadWisataById(widget.wisataId);
+      if (widget.initialWisata == null) {
+        context.read<WisataProvider>().loadWisataById(widget.wisataId);
+      }
     });
+  }
+
+  void _showWebMutationMessage(BuildContext context, String action) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$action dari Flutter Web masih diblokir backend karena CORS untuk method PUT/DELETE. Coba jalankan dari Android emulator/perangkat atau perbaiki konfigurasi backend.',
+        ),
+      ),
+    );
   }
 
   Future<void> _confirmDelete(
       BuildContext context, WisataProvider provider) async {
+    if (kIsWeb) {
+      _showWebMutationMessage(context, 'Hapus data');
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -66,8 +89,11 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
   Widget build(BuildContext context) {
     return Consumer<WisataProvider>(
       builder: (context, provider, _) {
-        if (provider.status == WisataStatus.loading ||
-            provider.status == WisataStatus.initial) {
+        final wisata = provider.selectedWisata ?? widget.initialWisata;
+
+        if (wisata == null &&
+            (provider.status == WisataStatus.loading ||
+                provider.status == WisataStatus.initial)) {
           return Scaffold(
             appBar: const TopAppBarWidget(
                 title: 'Detail Wisata', showBackButton: true),
@@ -75,7 +101,7 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
           );
         }
 
-        if (provider.status == WisataStatus.error) {
+        if (wisata == null && provider.status == WisataStatus.error) {
           return Scaffold(
             appBar: const TopAppBarWidget(
                 title: 'Detail Wisata', showBackButton: true),
@@ -86,7 +112,6 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
           );
         }
 
-        final wisata = provider.selectedWisata;
         if (wisata == null) {
           return Scaffold(
             appBar: const TopAppBarWidget(
@@ -104,8 +129,13 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
                 text: 'Edit',
                 icon: Icons.edit_outlined,
                 onTap: () async {
+                  if (kIsWeb) {
+                    _showWebMutationMessage(context, 'Edit data');
+                    return;
+                  }
                   final edited = await context.push<bool>(
                     RouteConstants.wisataEdit(wisata.id!),
+                    extra: wisata,
                   );
                   if (edited == true && context.mounted) {
                     provider.loadWisataById(widget.wisataId);

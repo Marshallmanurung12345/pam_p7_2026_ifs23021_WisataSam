@@ -11,6 +11,7 @@ import '../../features/wisata/wisata_add_screen.dart';
 import '../../features/wisata/wisata_detail_screen.dart';
 import '../../features/wisata/wisata_edit_screen.dart';
 import '../../features/wisata/wisata_screen.dart';
+import '../../data/models/wisata_model.dart';
 import '../../features/profile/profile_screen.dart';
 import '../constants/route_constants.dart';
 import '../../shared/widgets/bottom_nav_widget.dart';
@@ -72,14 +73,20 @@ final GoRouter appRouter = GoRouter(
       path: '/wisata/:id',
       builder: (context, state) {
         final id = state.pathParameters['id'] ?? '';
-        return WisataDetailScreen(wisataId: id);
+        return WisataDetailScreen(
+          wisataId: id,
+          initialWisata: state.extra is WisataModel ? state.extra as WisataModel : null,
+        );
       },
     ),
     GoRoute(
       path: '/wisata/:id/edit',
       builder: (context, state) {
         final id = state.pathParameters['id'] ?? '';
-        return WisataEditScreen(wisataId: id);
+        return WisataEditScreen(
+          wisataId: id,
+          initialWisata: state.extra is WisataModel ? state.extra as WisataModel : null,
+        );
       },
     ),
   ],

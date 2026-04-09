@@ -11,9 +11,14 @@ import '../../providers/wisata_provider.dart';
 import '../../shared/widgets/top_app_bar_widget.dart';
 
 class WisataEditScreen extends StatefulWidget {
-  const WisataEditScreen({super.key, required this.wisataId});
+  const WisataEditScreen({
+    super.key,
+    required this.wisataId,
+    this.initialWisata,
+  });
 
   final String wisataId;
+  final WisataModel? initialWisata;
 
   @override
   State<WisataEditScreen> createState() => _WisataEditScreenState();
@@ -43,8 +48,11 @@ class _WisataEditScreenState extends State<WisataEditScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialWisata != null) {
+      _populateForm(widget.initialWisata!);
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isInitialized) {
+      if (!_isInitialized && widget.initialWisata == null) {
         context.read<WisataProvider>().loadWisataById(widget.wisataId);
       }
     });
@@ -147,6 +155,17 @@ class _WisataEditScreenState extends State<WisataEditScreen> {
 
   Future<void> _submit(WisataModel original) async {
     if (!_formKey.currentState!.validate()) return;
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Simpan perubahan dari Flutter Web masih diblokir backend karena CORS untuk method PUT. Jalankan dari Android emulator/perangkat atau perbaiki backend.',
+          ),
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     final success = await context.read<WisataProvider>().editWisata(
@@ -185,7 +204,7 @@ class _WisataEditScreenState extends State<WisataEditScreen> {
 
     return Consumer<WisataProvider>(
       builder: (context, provider, _) {
-        final wisata = provider.selectedWisata;
+        final wisata = provider.selectedWisata ?? widget.initialWisata;
         if (wisata != null) _populateForm(wisata);
 
         return Scaffold(

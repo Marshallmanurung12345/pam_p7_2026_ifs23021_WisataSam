@@ -62,7 +62,10 @@ class _WisataScreenState extends State<WisataScreen> {
       ),
       WisataStatus.success => _WisataBody(
         wisataList: provider.wisataList,
-        onOpen: (id) => context.go(RouteConstants.wisataDetail(id)),
+        onOpen: (wisata) => context.go(
+          RouteConstants.wisataDetail(wisata.id!),
+          extra: wisata,
+        ),
       ),
     };
   }
@@ -72,7 +75,7 @@ class _WisataBody extends StatelessWidget {
   const _WisataBody({required this.wisataList, required this.onOpen});
 
   final List<WisataModel> wisataList;
-  final ValueChanged<String> onOpen;
+  final ValueChanged<WisataModel> onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +126,7 @@ class _WisataItemCard extends StatelessWidget {
   const _WisataItemCard({required this.wisata, required this.onOpen});
 
   final WisataModel wisata;
-  final ValueChanged<String> onOpen;
+  final ValueChanged<WisataModel> onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +140,7 @@ class _WisataItemCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => onOpen(wisata.id!),
+        onTap: () => onOpen(wisata),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
