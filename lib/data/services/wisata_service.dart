@@ -15,8 +15,9 @@ class WisataService {
   final http.Client _client;
 
   Future<ApiResponse<List<WisataModel>>> getWisata({String search = ''}) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisata}')
-        .replace(queryParameters: search.isNotEmpty ? {'search': search} : null);
+    final uri = Uri.parse(
+      '${ApiConstants.baseUrl}${ApiConstants.wisata}',
+    ).replace(queryParameters: search.isNotEmpty ? {'search': search} : null);
 
     try {
       final response = await _client.get(uri);
@@ -43,20 +44,25 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message:
+            'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
   }
 
   Future<ApiResponse<WisataModel>> getWisataById(String id) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}');
+    final uri = Uri.parse(
+      '${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}',
+    );
     try {
       final response = await _client.get(uri);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body) as Map<String, dynamic>;
         final dataMap = body['data'] as Map<String, dynamic>;
-        final wisata = WisataModel.fromJson(dataMap['wisata'] as Map<String, dynamic>);
+        final wisata = WisataModel.fromJson(
+          dataMap['wisata'] as Map<String, dynamic>,
+        );
         return ApiResponse(
           success: true,
           message: body['message'] as String? ?? 'Berhasil.',
@@ -72,7 +78,8 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message:
+            'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
   }
@@ -99,11 +106,17 @@ class WisataService {
       ..fields['tipsKunjungan'] = tipsKunjungan;
 
     if (kIsWeb && imageBytes != null) {
-      request.files.add(http.MultipartFile.fromBytes(
-        'file', imageBytes, filename: imageFilename,
-      ));
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          imageBytes,
+          filename: imageFilename,
+        ),
+      );
     } else if (imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+      request.files.add(
+        await http.MultipartFile.fromPath('file', imageFile.path),
+      );
     }
 
     try {
@@ -128,7 +141,8 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message:
+            'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
   }
@@ -144,7 +158,9 @@ class WisataService {
     Uint8List? imageBytes,
     String imageFilename = 'image.jpg',
   }) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}');
+    final uri = Uri.parse(
+      '${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}',
+    );
     final slug = _generateSlug(nama);
 
     final request = http.MultipartRequest('PUT', uri)
@@ -156,11 +172,17 @@ class WisataService {
       ..fields['tipsKunjungan'] = tipsKunjungan;
 
     if (kIsWeb && imageBytes != null) {
-      request.files.add(http.MultipartFile.fromBytes(
-        'file', imageBytes, filename: imageFilename,
-      ));
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          imageBytes,
+          filename: imageFilename,
+        ),
+      );
     } else if (imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+      request.files.add(
+        await http.MultipartFile.fromPath('file', imageFile.path),
+      );
     }
 
     try {
@@ -183,18 +205,24 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message:
+            'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
   }
 
   Future<ApiResponse<void>> deleteWisata(String id) async {
-    final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}');
+    final uri = Uri.parse(
+      '${ApiConstants.baseUrl}${ApiConstants.wisataById(id)}',
+    );
     try {
       final response = await _client.delete(uri);
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        return const ApiResponse(success: true, message: 'Wisata berhasil dihapus.');
+        return const ApiResponse(
+          success: true,
+          message: 'Wisata berhasil dihapus.',
+        );
       }
 
       return ApiResponse(success: false, message: _parseErrorMessage(response));
@@ -205,7 +233,8 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message:
+            'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
   }
@@ -213,7 +242,8 @@ class WisataService {
   String _parseErrorMessage(http.Response response) {
     try {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
-      return body['message'] as String? ?? 'Gagal. Kode: ${response.statusCode}';
+      return body['message'] as String? ??
+          'Gagal. Kode: ${response.statusCode}';
     } catch (_) {
       return 'Gagal. Kode: ${response.statusCode}';
     }
