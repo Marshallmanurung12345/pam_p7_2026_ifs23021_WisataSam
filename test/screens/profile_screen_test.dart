@@ -50,15 +50,14 @@ void main() {
       await tester.pumpWidget(buildProfileTest());
       await tester.pumpAndSettle();
 
-      // Nama default sesuai kode
-      expect(find.text('Abdullah Ubaid'), findsOneWidget);
+      expect(find.text('Marshall Manurung'), findsOneWidget);
     });
 
-    testWidgets('menampilkan username', (tester) async {
+    testWidgets('menampilkan NIM', (tester) async {
       await tester.pumpWidget(buildProfileTest());
       await tester.pumpAndSettle();
 
-      expect(find.text('ifs18005'), findsOneWidget);
+      expect(find.text('11S23021'), findsOneWidget);
     });
 
     testWidgets('menampilkan kartu "Tentang Saya"', (tester) async {

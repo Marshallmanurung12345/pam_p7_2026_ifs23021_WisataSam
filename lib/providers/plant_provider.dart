@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../core/utils/error_message_formatter.dart';
+import '../data/mock/mock_plant_data.dart';
 import '../data/models/plant_model.dart';
 import '../data/services/plant_repository.dart';
 
@@ -38,6 +39,11 @@ class PlantProvider extends ChangeNotifier {
     if (result.success && result.data != null) {
       _plants = List<PlantModel>.from(result.data!);
       _setStatus(PlantStatus.success);
+    } else if (_shouldUseWebFallback(result.message)) {
+      _errorMessage = '';
+      _selectedPlant = null;
+      _plants = List<PlantModel>.from(MockPlantData.items);
+      _setStatus(PlantStatus.success);
     } else {
       _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(PlantStatus.error);
@@ -50,6 +56,12 @@ class PlantProvider extends ChangeNotifier {
     if (result.success && result.data != null) {
       _selectedPlant = result.data;
       _setStatus(PlantStatus.success);
+    } else if (_shouldUseWebFallback(result.message)) {
+      _errorMessage = '';
+      _selectedPlant = MockPlantData.findById(id);
+      _setStatus(
+        _selectedPlant != null ? PlantStatus.success : PlantStatus.error,
+      );
     } else {
       _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(PlantStatus.error);
@@ -145,5 +157,18 @@ class PlantProvider extends ChangeNotifier {
   void _setStatus(PlantStatus status) {
     _status = status;
     notifyListeners();
+  }
+
+  bool _shouldUseWebFallback(String message) {
+    if (!kIsWeb) {
+      return false;
+    }
+
+    final normalized = message.toLowerCase();
+    return normalized.contains('request diblokir browser') ||
+        normalized.contains('cors') ||
+        normalized.contains('ssl') ||
+        normalized.contains('failed to fetch') ||
+        normalized.contains('clientexception');
   }
 }

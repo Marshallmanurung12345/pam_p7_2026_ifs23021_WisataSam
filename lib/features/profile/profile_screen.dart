@@ -53,7 +53,7 @@ class _ProfileBody extends StatelessWidget {
 
                 // Nama
                 Text(
-                  'Abdullah Ubaid',  // Ubah dengan nama kamu
+                  'Marshall Manurung',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -61,9 +61,9 @@ class _ProfileBody extends StatelessWidget {
 
                 const SizedBox(height: 4),
 
-                // Username
+                // NIM
                 Text(
-                  'ifs18005',  // Ubah dengan username kamu
+                  '11S23021',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
