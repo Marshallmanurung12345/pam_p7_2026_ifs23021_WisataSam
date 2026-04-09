@@ -155,17 +155,6 @@ class _WisataEditScreenState extends State<WisataEditScreen> {
 
   Future<void> _submit(WisataModel original) async {
     if (!_formKey.currentState!.validate()) return;
-    if (kIsWeb) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Simpan perubahan dari Flutter Web masih diblokir backend karena CORS untuk method PUT. Jalankan dari Android emulator/perangkat atau perbaiki backend.',
-          ),
-        ),
-      );
-      return;
-    }
-
     setState(() => _isLoading = true);
 
     final success = await context.read<WisataProvider>().editWisata(

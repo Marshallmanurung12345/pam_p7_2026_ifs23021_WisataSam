@@ -1,7 +1,6 @@
 // lib/features/wisata/wisata_detail_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/route_constants.dart';
@@ -36,23 +35,8 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
     });
   }
 
-  void _showWebMutationMessage(BuildContext context, String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '$action dari Flutter Web masih diblokir backend karena CORS untuk method PUT/DELETE. Coba jalankan dari Android emulator/perangkat atau perbaiki konfigurasi backend.',
-        ),
-      ),
-    );
-  }
-
   Future<void> _confirmDelete(
       BuildContext context, WisataProvider provider) async {
-    if (kIsWeb) {
-      _showWebMutationMessage(context, 'Hapus data');
-      return;
-    }
-
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -129,10 +113,6 @@ class _WisataDetailScreenState extends State<WisataDetailScreen> {
                 text: 'Edit',
                 icon: Icons.edit_outlined,
                 onTap: () async {
-                  if (kIsWeb) {
-                    _showWebMutationMessage(context, 'Edit data');
-                    return;
-                  }
                   final edited = await context.push<bool>(
                     RouteConstants.wisataEdit(wisata.id!),
                     extra: wisata,
