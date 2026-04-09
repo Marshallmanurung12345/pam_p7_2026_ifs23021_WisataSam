@@ -6,7 +6,7 @@ class ApiConstants {
 
   /// Base URL API backend (Plants + Wisata Samosir)
   static const String baseUrl =
-      'https://pam-2026-p7-ifs23021.marshalll.fun:8080';
+      'https://pam-2026-p4-ifs23021-be.marshalll.fun:8080';
 
   // ── Plants (tetap dipertahankan) ──
   static const String plants = '/plants';
