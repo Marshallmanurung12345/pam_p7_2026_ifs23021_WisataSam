@@ -8,7 +8,7 @@ class ApiConstants {
   /// Ganti ke localhost jika testing lokal:
   /// static const String baseUrl = 'http://localhost:8000';
   static const String baseUrl =
-      'https://pam-2026-p4-ifs23021-be.marshalll.fun:8080/';
+      'https://pam-2026-p4-ifs23021-be.marshalll.fun:8080';
 
   // ── Plants ──
   static const String plants = '/plants';
