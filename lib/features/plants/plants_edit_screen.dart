@@ -193,7 +193,7 @@ class _PlantsEditScreenState extends State<PlantsEditScreen> {
                                 : Image.network(
                               plant.gambar,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Icon(
+                              errorBuilder: (_, error, stackTrace) => Icon(
                                 Icons.eco,
                                 size: 48,
                                 color: colorScheme.primary,
@@ -295,3 +295,6 @@ class _PlantsEditScreenState extends State<PlantsEditScreen> {
     );
   }
 }
+
+
+

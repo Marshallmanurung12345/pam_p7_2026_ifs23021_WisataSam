@@ -1,5 +1,3 @@
-// lib/features/home/home_screen.dart
-
 import 'package:flutter/material.dart';
 import '../../shared/widgets/top_app_bar_widget.dart';
 
@@ -26,7 +24,6 @@ class _HomeBody extends StatelessWidget {
       padding: const EdgeInsets.only(top: 16),
       child: Column(
         children: [
-          // Banner utama
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 8),
             elevation: 4,
@@ -34,7 +31,7 @@ class _HomeBody extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                '🌳 Delcom Plants 🌳',
+                'Delcom Plants',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: colorScheme.primary,
                 ),
@@ -42,23 +39,21 @@ class _HomeBody extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Grid emoji tanaman
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: ['🌱', '🌿', '🍃', '🥬'].map((emoji) {
+            children: const [
+              Icons.spa_outlined,
+              Icons.local_florist_outlined,
+              Icons.eco_outlined,
+              Icons.energy_savings_leaf_outlined,
+            ].map((icon) {
               return Card(
                 margin: const EdgeInsets.all(8),
                 elevation: 4,
-                color: colorScheme.surface,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    emoji,
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
+                  padding: EdgeInsets.all(16),
+                  child: Icon(icon, size: 36),
                 ),
               );
             }).toList(),

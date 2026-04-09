@@ -75,12 +75,18 @@ class _LoadingWidgetState extends State<LoadingWidget>
                 );
               },
             ),
-            // Logo tengah
-            Image.asset(
-              'assets/images/img_kol.png',
+            Container(
               width: 76,
               height: 76,
-              fit: BoxFit.contain,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.eco,
+                size: 40,
+                color: color,
+              ),
             ),
           ],
         ),

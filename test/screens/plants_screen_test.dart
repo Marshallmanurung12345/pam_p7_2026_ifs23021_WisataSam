@@ -1,6 +1,5 @@
 // test/widget/plants_screen_test.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -32,15 +31,15 @@ Widget buildPlantsScreenTest(List<PlantModel> plants) {
     routes: [
       GoRoute(
         path: '/plants',
-        builder: (_, __) => const PlantsScreen(),
+        builder: (_, state) => const PlantsScreen(),
       ),
       GoRoute(
         path: '/plants/:id',
-        builder: (_, __) => const SizedBox(),
+        builder: (_, state) => const SizedBox(),
       ),
       GoRoute(
         path: '/plants/add',
-        builder: (_, __) => const SizedBox(),
+        builder: (_, state) => const SizedBox(),
       ),
     ],
   );

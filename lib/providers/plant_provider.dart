@@ -1,7 +1,6 @@
 // lib/providers/plant_provider.dart
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import '../data/models/plant_model.dart';
 import '../data/services/plant_repository.dart';
@@ -36,7 +35,7 @@ class PlantProvider extends ChangeNotifier {
     _setStatus(PlantStatus.loading);
     final result = await _repository.getPlants();
     if (result.success && result.data != null) {
-      _plants = result.data!;
+      _plants = List<PlantModel>.from(result.data!);
       _setStatus(PlantStatus.success);
     } else {
       _errorMessage = result.message;
