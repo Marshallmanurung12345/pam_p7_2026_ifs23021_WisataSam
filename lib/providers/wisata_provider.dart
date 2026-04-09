@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../core/utils/error_message_formatter.dart';
+import '../data/mock/mock_wisata_data.dart';
 import '../data/models/wisata_model.dart';
 import '../data/services/wisata_repository.dart';
 
@@ -41,6 +42,11 @@ class WisataProvider extends ChangeNotifier {
     if (result.success && result.data != null) {
       _wisataList = List<WisataModel>.from(result.data!);
       _setStatus(WisataStatus.success);
+    } else if (_shouldUseWebFallback(result.message)) {
+      _errorMessage = '';
+      _selectedWisata = null;
+      _wisataList = List<WisataModel>.from(MockWisataData.items);
+      _setStatus(WisataStatus.success);
     } else {
       _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(WisataStatus.error);
@@ -53,6 +59,12 @@ class WisataProvider extends ChangeNotifier {
     if (result.success && result.data != null) {
       _selectedWisata = result.data;
       _setStatus(WisataStatus.success);
+    } else if (_shouldUseWebFallback(result.message)) {
+      _errorMessage = '';
+      _selectedWisata = MockWisataData.findById(id);
+      _setStatus(
+        _selectedWisata != null ? WisataStatus.success : WisataStatus.error,
+      );
     } else {
       _errorMessage = ErrorMessageFormatter.format(result.message);
       _setStatus(WisataStatus.error);
@@ -147,5 +159,18 @@ class WisataProvider extends ChangeNotifier {
   void _setStatus(WisataStatus status) {
     _status = status;
     notifyListeners();
+  }
+
+  bool _shouldUseWebFallback(String message) {
+    if (!kIsWeb) {
+      return false;
+    }
+
+    final normalized = message.toLowerCase();
+    return normalized.contains('request diblokir browser') ||
+        normalized.contains('cors') ||
+        normalized.contains('ssl') ||
+        normalized.contains('failed to fetch') ||
+        normalized.contains('clientexception');
   }
 }
