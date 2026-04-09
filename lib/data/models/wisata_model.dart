@@ -1,6 +1,10 @@
 // lib/data/models/wisata_model.dart
 
 /// Model data untuk Wisata Samosir
+/// Backend field mapping:
+///   - tipsKunjungan ↔ jamBuka (backend tidak punya tipsKunjungan)
+///   - kategori ↔ kategori
+///   - lokasi ↔ lokasi
 class WisataModel {
   const WisataModel({
     this.id,
@@ -11,6 +15,9 @@ class WisataModel {
     required this.lokasi,
     required this.kategori,
     required this.tipsKunjungan,
+    this.slug = '',
+    this.hargaTiket = 0,
+    this.kontak,
   });
 
   final String? id;
@@ -20,7 +27,13 @@ class WisataModel {
   final String deskripsi;
   final String lokasi;
   final String kategori;
+
+  /// Di backend disimpan sebagai kolom `jam_buka` (field `jamBuka`)
   final String tipsKunjungan;
+
+  final String slug;
+  final int hargaTiket;
+  final String? kontak;
 
   factory WisataModel.fromJson(Map<String, dynamic> json) {
     return WisataModel(
@@ -31,7 +44,13 @@ class WisataModel {
       deskripsi: json['deskripsi'] as String? ?? '',
       lokasi: json['lokasi'] as String? ?? '',
       kategori: json['kategori'] as String? ?? '',
-      tipsKunjungan: json['tipsKunjungan'] as String? ?? '',
+      // Backend menyimpan tips kunjungan di field jamBuka
+      tipsKunjungan: json['jamBuka'] as String? ??
+          json['tipsKunjungan'] as String? ??
+          '',
+      slug: json['slug'] as String? ?? '',
+      hargaTiket: (json['hargaTiket'] as num?)?.toInt() ?? 0,
+      kontak: json['kontak'] as String?,
     );
   }
 
@@ -44,6 +63,9 @@ class WisataModel {
     String? lokasi,
     String? kategori,
     String? tipsKunjungan,
+    String? slug,
+    int? hargaTiket,
+    String? kontak,
   }) {
     return WisataModel(
       id: id ?? this.id,
@@ -54,6 +76,9 @@ class WisataModel {
       lokasi: lokasi ?? this.lokasi,
       kategori: kategori ?? this.kategori,
       tipsKunjungan: tipsKunjungan ?? this.tipsKunjungan,
+      slug: slug ?? this.slug,
+      hargaTiket: hargaTiket ?? this.hargaTiket,
+      kontak: kontak ?? this.kontak,
     );
   }
 
