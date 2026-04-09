@@ -18,41 +18,63 @@ class PlantService {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.plants}')
         .replace(queryParameters: search.isNotEmpty ? {'search': search} : null);
 
-    final response = await _client.get(uri);
+    try {
+      final response = await _client.get(uri);
 
-    if (response.statusCode == 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      final dataMap = body['data'] as Map<String, dynamic>;
-      final List<dynamic> jsonList = dataMap['plants'] as List<dynamic>;
-      final plants = jsonList
-          .map((e) => PlantModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-      return ApiResponse(
-        success: true,
-        message: body['message'] as String? ?? 'Berhasil.',
-        data: plants,
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        final dataMap = body['data'] as Map<String, dynamic>;
+        final List<dynamic> jsonList = dataMap['plants'] as List<dynamic>;
+        final plants = jsonList
+            .map((e) => PlantModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+        return ApiResponse(
+          success: true,
+          message: body['message'] as String? ?? 'Berhasil.',
+          data: plants,
+        );
+      }
+
+      return ApiResponse(success: false, message: _parseErrorMessage(response));
+    } on http.ClientException catch (e) {
+      return ApiResponse(success: false, message: _parseClientException(e));
+    } on SocketException catch (e) {
+      return ApiResponse(success: false, message: _parseSocketException(e));
+    } on HandshakeException {
+      return const ApiResponse(
+        success: false,
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
-
-    return ApiResponse(success: false, message: _parseErrorMessage(response));
   }
 
   Future<ApiResponse<PlantModel>> getPlantById(String id) async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.plantById(id)}');
-    final response = await _client.get(uri);
+    try {
+      final response = await _client.get(uri);
 
-    if (response.statusCode == 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      final dataMap = body['data'] as Map<String, dynamic>;
-      final plant = PlantModel.fromJson(dataMap['plant'] as Map<String, dynamic>);
-      return ApiResponse(
-        success: true,
-        message: body['message'] as String? ?? 'Berhasil.',
-        data: plant,
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        final dataMap = body['data'] as Map<String, dynamic>;
+        final plant = PlantModel.fromJson(dataMap['plant'] as Map<String, dynamic>);
+        return ApiResponse(
+          success: true,
+          message: body['message'] as String? ?? 'Berhasil.',
+          data: plant,
+        );
+      }
+
+      return ApiResponse(success: false, message: _parseErrorMessage(response));
+    } on http.ClientException catch (e) {
+      return ApiResponse(success: false, message: _parseClientException(e));
+    } on SocketException catch (e) {
+      return ApiResponse(success: false, message: _parseSocketException(e));
+    } on HandshakeException {
+      return const ApiResponse(
+        success: false,
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
-
-    return ApiResponse(success: false, message: _parseErrorMessage(response));
   }
 
   // POST /plants — multipart/form-data
@@ -83,20 +105,31 @@ class PlantService {
       request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
     }
 
-    final streamed = await request.send();
-    final response = await http.Response.fromStream(streamed);
+    try {
+      final streamed = await request.send();
+      final response = await http.Response.fromStream(streamed);
 
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      final dataMap = body['data'] as Map<String, dynamic>;
-      return ApiResponse(
-        success: true,
-        message: body['message'] as String? ?? 'Tanaman berhasil ditambahkan.',
-        data: dataMap['plantId'] as String,
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        final dataMap = body['data'] as Map<String, dynamic>;
+        return ApiResponse(
+          success: true,
+          message: body['message'] as String? ?? 'Tanaman berhasil ditambahkan.',
+          data: dataMap['plantId'] as String,
+        );
+      }
+
+      return ApiResponse(success: false, message: _parseErrorMessage(response));
+    } on http.ClientException catch (e) {
+      return ApiResponse(success: false, message: _parseClientException(e));
+    } on SocketException catch (e) {
+      return ApiResponse(success: false, message: _parseSocketException(e));
+    } on HandshakeException {
+      return const ApiResponse(
+        success: false,
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
-
-    return ApiResponse(success: false, message: _parseErrorMessage(response));
   }
 
   // PUT /plants/:id — multipart/form-data
@@ -127,29 +160,51 @@ class PlantService {
       request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
     }
 
-    final streamed = await request.send();
-    final response = await http.Response.fromStream(streamed);
+    try {
+      final streamed = await request.send();
+      final response = await http.Response.fromStream(streamed);
 
-    if (response.statusCode == 200) {
-      final body = jsonDecode(response.body) as Map<String, dynamic>;
-      return ApiResponse(
-        success: true,
-        message: body['message'] as String? ?? 'Tanaman berhasil diperbarui.',
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body) as Map<String, dynamic>;
+        return ApiResponse(
+          success: true,
+          message: body['message'] as String? ?? 'Tanaman berhasil diperbarui.',
+        );
+      }
+
+      return ApiResponse(success: false, message: _parseErrorMessage(response));
+    } on http.ClientException catch (e) {
+      return ApiResponse(success: false, message: _parseClientException(e));
+    } on SocketException catch (e) {
+      return ApiResponse(success: false, message: _parseSocketException(e));
+    } on HandshakeException {
+      return const ApiResponse(
+        success: false,
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
       );
     }
-
-    return ApiResponse(success: false, message: _parseErrorMessage(response));
   }
 
   Future<ApiResponse<void>> deletePlant(String id) async {
     final uri = Uri.parse('${ApiConstants.baseUrl}${ApiConstants.plantById(id)}');
-    final response = await _client.delete(uri);
+    try {
+      final response = await _client.delete(uri);
 
-    if (response.statusCode == 200 || response.statusCode == 204) {
-      return const ApiResponse(success: true, message: 'Tanaman berhasil dihapus.');
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return const ApiResponse(success: true, message: 'Tanaman berhasil dihapus.');
+      }
+
+      return ApiResponse(success: false, message: _parseErrorMessage(response));
+    } on http.ClientException catch (e) {
+      return ApiResponse(success: false, message: _parseClientException(e));
+    } on SocketException catch (e) {
+      return ApiResponse(success: false, message: _parseSocketException(e));
+    } on HandshakeException {
+      return const ApiResponse(
+        success: false,
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+      );
     }
-
-    return ApiResponse(success: false, message: _parseErrorMessage(response));
   }
 
   String _parseErrorMessage(http.Response response) {
@@ -159,6 +214,17 @@ class PlantService {
     } catch (_) {
       return 'Gagal. Kode: ${response.statusCode}';
     }
+  }
+
+  String _parseClientException(http.ClientException error) {
+    if (kIsWeb) {
+      return 'Request diblokir browser atau backend tidak bisa dijangkau. Periksa CORS, SSL, dan status server.';
+    }
+    return 'Koneksi ke backend gagal: ${error.message}';
+  }
+
+  String _parseSocketException(SocketException error) {
+    return 'Tidak bisa terhubung ke backend: ${error.message}';
   }
 
   void dispose() => _client.close();
