@@ -1,10 +1,11 @@
 // lib/data/models/wisata_model.dart
 
+import '../../core/constants/api_constants.dart';
+
 /// Model data untuk Wisata Samosir
 /// Backend field mapping:
 ///   - tipsKunjungan ↔ jamBuka (backend tidak punya tipsKunjungan)
-///   - kategori ↔ kategori
-///   - lokasi ↔ lokasi
+///   - gambar (URL lengkap) dibangun dari pathGambar + baseUrl
 class WisataModel {
   const WisataModel({
     this.id,
@@ -22,8 +23,13 @@ class WisataModel {
 
   final String? id;
   final String nama;
+
+  /// URL lengkap gambar, dibangun dari pathGambar + baseUrl backend
   final String gambar;
+
+  /// Path relatif di server, contoh: "uploads/destinations/uuid.png"
   final String pathGambar;
+
   final String deskripsi;
   final String lokasi;
   final String kategori;
@@ -36,15 +42,26 @@ class WisataModel {
   final String? kontak;
 
   factory WisataModel.fromJson(Map<String, dynamic> json) {
+    final pathGambar = json['pathGambar'] as String? ?? '';
+
+    // Backend mengembalikan pathGambar (path relatif), bukan URL lengkap.
+    // Bangun URL lengkap dari baseUrl + pathGambar.
+    // Contoh: "uploads/destinations/abc.png"
+    //       → "https://host:8080/uploads/destinations/abc.png"
+    String gambar = json['gambar'] as String? ?? '';
+    if (gambar.isEmpty && pathGambar.isNotEmpty) {
+      gambar = '${ApiConstants.baseUrl}/$pathGambar';
+    }
+
     return WisataModel(
       id: json['id'] as String?,
       nama: json['nama'] as String? ?? '',
-      gambar: json['gambar'] as String? ?? '',
-      pathGambar: json['pathGambar'] as String? ?? '',
+      gambar: gambar,
+      pathGambar: pathGambar,
       deskripsi: json['deskripsi'] as String? ?? '',
       lokasi: json['lokasi'] as String? ?? '',
       kategori: json['kategori'] as String? ?? '',
-      // Backend menyimpan tips kunjungan di field jamBuka
+      // Backend menyimpan tipsKunjungan di kolom jamBuka
       tipsKunjungan: json['jamBuka'] as String? ??
           json['tipsKunjungan'] as String? ??
           '',

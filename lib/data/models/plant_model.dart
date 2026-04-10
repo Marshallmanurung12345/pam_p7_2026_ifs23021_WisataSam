@@ -1,7 +1,8 @@
 // lib/data/models/plant_model.dart
 
+import '../../core/constants/api_constants.dart';
+
 /// Model data untuk tanaman
-/// Menggunakan immutable class (best practice Flutter/Dart)
 class PlantModel {
   const PlantModel({
     this.id,
@@ -13,12 +14,10 @@ class PlantModel {
     required this.efekSamping,
   });
 
-  /// UUID dari database, contoh: "550e8400-e29b-41d4-a716-446655440000"
   final String? id;
   final String nama;
 
-  /// URL publik gambar dari server, contoh: "https://host/static/plants/uuid.png"
-  /// Dapat langsung digunakan oleh Image.network()
+  /// URL publik gambar lengkap, contoh: "https://host:8080/uploads/plants/uuid.png"
   final String gambar;
 
   /// Path relatif file di server, contoh: "uploads/plants/uuid.png"
@@ -28,21 +27,27 @@ class PlantModel {
   final String manfaat;
   final String efekSamping;
 
-  /// Membuat PlantModel dari JSON (response API)
-  /// Key JSON menggunakan camelCase sesuai response Ktor
   factory PlantModel.fromJson(Map<String, dynamic> json) {
+    final pathGambar = json['pathGambar'] as String? ?? '';
+
+    // Backend mengembalikan pathGambar (path relatif).
+    // Bangun URL lengkap dari baseUrl + pathGambar.
+    String gambar = json['gambar'] as String? ?? '';
+    if (gambar.isEmpty && pathGambar.isNotEmpty) {
+      gambar = '${ApiConstants.baseUrl}/$pathGambar';
+    }
+
     return PlantModel(
       id: json['id'] as String?,
       nama: json['nama'] as String? ?? '',
-      gambar: json['gambar'] as String? ?? '',
-      pathGambar: json['pathGambar'] as String? ?? '',
+      gambar: gambar,
+      pathGambar: pathGambar,
       deskripsi: json['deskripsi'] as String? ?? '',
       manfaat: json['manfaat'] as String? ?? '',
       efekSamping: json['efekSamping'] as String? ?? '',
     );
   }
 
-  /// Metode copyWith memudahkan pembuatan objek baru dengan data yang diubah sebagian
   PlantModel copyWith({
     String? id,
     String? nama,
