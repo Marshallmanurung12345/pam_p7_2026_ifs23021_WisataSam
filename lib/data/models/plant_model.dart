@@ -2,7 +2,8 @@
 
 import '../../core/constants/api_constants.dart';
 
-/// Model data untuk tanaman
+/// Model data untuk tanaman.
+/// Gambar diakses via endpoint: GET /plants/{id}/image
 class PlantModel {
   const PlantModel({
     this.id,
@@ -17,10 +18,10 @@ class PlantModel {
   final String? id;
   final String nama;
 
-  /// URL publik gambar lengkap, contoh: "https://host:8080/uploads/plants/uuid.png"
+  /// URL endpoint gambar: GET /plants/{id}/image
   final String gambar;
 
-  /// Path relatif file di server, contoh: "uploads/plants/uuid.png"
+  /// Path relatif file di server (dari backend)
   final String pathGambar;
 
   final String deskripsi;
@@ -28,17 +29,17 @@ class PlantModel {
   final String efekSamping;
 
   factory PlantModel.fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as String?;
     final pathGambar = json['pathGambar'] as String? ?? '';
 
-    // Backend mengembalikan pathGambar (path relatif).
-    // Bangun URL lengkap dari baseUrl + pathGambar.
-    String gambar = json['gambar'] as String? ?? '';
-    if (gambar.isEmpty && pathGambar.isNotEmpty) {
-      gambar = '${ApiConstants.baseUrl}/$pathGambar';
+    // Gunakan endpoint /plants/{id}/image sebagai URL gambar
+    String gambar = '';
+    if (id != null && id.isNotEmpty && pathGambar.isNotEmpty) {
+      gambar = '${ApiConstants.baseUrl}/plants/$id/image';
     }
 
     return PlantModel(
-      id: json['id'] as String?,
+      id: id,
       nama: json['nama'] as String? ?? '',
       gambar: gambar,
       pathGambar: pathGambar,

@@ -2,10 +2,8 @@
 
 import '../../core/constants/api_constants.dart';
 
-/// Model data untuk Wisata Samosir
-/// Backend field mapping:
-///   - tipsKunjungan ↔ jamBuka (backend tidak punya tipsKunjungan)
-///   - gambar (URL lengkap) dibangun dari pathGambar + baseUrl
+/// Model data untuk Wisata Samosir.
+/// Gambar diakses via endpoint: GET /wisata/{id}/image
 class WisataModel {
   const WisataModel({
     this.id,
@@ -24,17 +22,17 @@ class WisataModel {
   final String? id;
   final String nama;
 
-  /// URL lengkap gambar, dibangun dari pathGambar + baseUrl backend
+  /// URL endpoint gambar: GET /wisata/{id}/image
   final String gambar;
 
-  /// Path relatif di server, contoh: "uploads/destinations/uuid.png"
+  /// Path relatif file di server (dari backend)
   final String pathGambar;
 
   final String deskripsi;
   final String lokasi;
   final String kategori;
 
-  /// Di backend disimpan sebagai kolom `jam_buka` (field `jamBuka`)
+  /// Disimpan di kolom jamBuka di backend
   final String tipsKunjungan;
 
   final String slug;
@@ -42,26 +40,24 @@ class WisataModel {
   final String? kontak;
 
   factory WisataModel.fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as String?;
     final pathGambar = json['pathGambar'] as String? ?? '';
 
-    // Backend mengembalikan pathGambar (path relatif), bukan URL lengkap.
-    // Bangun URL lengkap dari baseUrl + pathGambar.
-    // Contoh: "uploads/destinations/abc.png"
-    //       → "https://host:8080/uploads/destinations/abc.png"
-    String gambar = json['gambar'] as String? ?? '';
-    if (gambar.isEmpty && pathGambar.isNotEmpty) {
-      gambar = '${ApiConstants.baseUrl}/$pathGambar';
+    // Gunakan endpoint /wisata/{id}/image sebagai URL gambar
+    // karena backend melayani gambar via route, bukan file statis
+    String gambar = '';
+    if (id != null && id.isNotEmpty && pathGambar.isNotEmpty) {
+      gambar = '${ApiConstants.baseUrl}/wisata/$id/image';
     }
 
     return WisataModel(
-      id: json['id'] as String?,
+      id: id,
       nama: json['nama'] as String? ?? '',
       gambar: gambar,
       pathGambar: pathGambar,
       deskripsi: json['deskripsi'] as String? ?? '',
       lokasi: json['lokasi'] as String? ?? '',
       kategori: json['kategori'] as String? ?? '',
-      // Backend menyimpan tipsKunjungan di kolom jamBuka
       tipsKunjungan: json['jamBuka'] as String? ??
           json['tipsKunjungan'] as String? ??
           '',
