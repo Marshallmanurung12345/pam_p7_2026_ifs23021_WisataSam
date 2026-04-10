@@ -1,7 +1,5 @@
 // lib/data/models/plant_model.dart
 
-import '../../core/constants/api_constants.dart';
-
 /// Model data untuk tanaman.
 /// Gambar diakses via endpoint: GET /plants/{id}/image
 class PlantModel {
@@ -21,21 +19,24 @@ class PlantModel {
   /// URL endpoint gambar: GET /plants/{id}/image
   final String gambar;
 
-  /// Path relatif file di server (dari backend)
+  /// Path relatif file di server
   final String pathGambar;
 
   final String deskripsi;
   final String manfaat;
   final String efekSamping;
 
+  static const String _baseUrl =
+      'https://pam-2026-p4-ifs23021-be.marshalll.fun:8080';
+
   factory PlantModel.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String?;
     final pathGambar = json['pathGambar'] as String? ?? '';
 
-    // Gunakan endpoint /plants/{id}/image sebagai URL gambar
+    // Bangun URL gambar dari endpoint /plants/{id}/image
     String gambar = '';
     if (id != null && id.isNotEmpty && pathGambar.isNotEmpty) {
-      gambar = '${ApiConstants.baseUrl}/plants/$id/image';
+      gambar = '$_baseUrl/plants/$id/image';
     }
 
     return PlantModel(

@@ -25,9 +25,12 @@ class WisataService {
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body) as Map<String, dynamic>;
         final dataMap = body['data'] as Map<String, dynamic>;
-        // Backend mengembalikan key 'wisata' (alias) atau 'destinations'
-        final rawList = (dataMap['wisata'] ?? dataMap['destinations'])
-        as List<dynamic>? ?? [];
+
+        // Backend p4 mengembalikan key 'destinations' dan alias 'wisata'
+        final rawList = (dataMap['destinations'] ??
+            dataMap['wisata']) as List<dynamic>? ??
+            [];
+
         final wisataList = rawList
             .map((e) => WisataModel.fromJson(e as Map<String, dynamic>))
             .toList();
@@ -46,8 +49,7 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message:
-        'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL tidak valid.',
       );
     }
   }
@@ -62,7 +64,8 @@ class WisataService {
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body) as Map<String, dynamic>;
         final dataMap = body['data'] as Map<String, dynamic>;
-        // Backend mengembalikan key 'wisata' (alias) atau 'destination'
+
+        // Backend p4 mengembalikan key 'wisata' atau 'destination'
         final raw = dataMap['wisata'] ?? dataMap['destination'];
         final wisata = WisataModel.fromJson(raw as Map<String, dynamic>);
         return ApiResponse(
@@ -80,8 +83,7 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message:
-        'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL tidak valid.',
       );
     }
   }
@@ -105,23 +107,17 @@ class WisataService {
       ..fields['kategori'] = kategori
       ..fields['deskripsi'] = deskripsi
       ..fields['lokasi'] = lokasi
-    // tipsKunjungan disimpan di field jamBuka di backend
-      ..fields['jamBuka'] = tipsKunjungan
+      ..fields['jamBuka'] = tipsKunjungan  // backend pakai jamBuka
       ..fields['hargaTiket'] = '0'
       ..fields['kontak'] = '';
 
     if (kIsWeb && imageBytes != null) {
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          imageBytes,
-          filename: imageFilename,
-        ),
-      );
+      request.files.add(http.MultipartFile.fromBytes(
+        'file', imageBytes, filename: imageFilename,
+      ));
     } else if (imageFile != null) {
       request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
+          await http.MultipartFile.fromPath('file', imageFile.path));
     }
 
     try {
@@ -132,7 +128,8 @@ class WisataService {
         final body = jsonDecode(response.body) as Map<String, dynamic>;
         final dataMap = body['data'] as Map<String, dynamic>;
         // Backend mengembalikan wisataId atau destinationId
-        final id = (dataMap['wisataId'] ?? dataMap['destinationId']) as String;
+        final id = (dataMap['wisataId'] ??
+            dataMap['destinationId']) as String;
         return ApiResponse(
           success: true,
           message: body['message'] as String? ?? 'Wisata berhasil ditambahkan.',
@@ -148,8 +145,7 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message:
-        'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL tidak valid.',
       );
     }
   }
@@ -176,23 +172,17 @@ class WisataService {
       ..fields['kategori'] = kategori
       ..fields['deskripsi'] = deskripsi
       ..fields['lokasi'] = lokasi
-    // tipsKunjungan disimpan di field jamBuka di backend
-      ..fields['jamBuka'] = tipsKunjungan
+      ..fields['jamBuka'] = tipsKunjungan  // backend pakai jamBuka
       ..fields['hargaTiket'] = '0'
       ..fields['kontak'] = '';
 
     if (kIsWeb && imageBytes != null) {
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'file',
-          imageBytes,
-          filename: imageFilename,
-        ),
-      );
+      request.files.add(http.MultipartFile.fromBytes(
+        'file', imageBytes, filename: imageFilename,
+      ));
     } else if (imageFile != null) {
       request.files.add(
-        await http.MultipartFile.fromPath('file', imageFile.path),
-      );
+          await http.MultipartFile.fromPath('file', imageFile.path));
     }
 
     try {
@@ -215,8 +205,7 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message:
-        'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL tidak valid.',
       );
     }
   }
@@ -243,8 +232,7 @@ class WisataService {
     } on HandshakeException {
       return const ApiResponse(
         success: false,
-        message:
-        'Koneksi HTTPS ditolak. Sertifikat SSL backend tidak valid atau belum dipercaya browser.',
+        message: 'Koneksi HTTPS ditolak. Sertifikat SSL tidak valid.',
       );
     }
   }
@@ -261,7 +249,7 @@ class WisataService {
 
   String _parseClientException(http.ClientException error) {
     if (kIsWeb) {
-      return 'Request diblokir browser atau backend tidak bisa dijangkau. Periksa CORS, SSL, dan status server.';
+      return 'Request diblokir browser atau backend tidak bisa dijangkau.';
     }
     return 'Koneksi ke backend gagal: ${error.message}';
   }

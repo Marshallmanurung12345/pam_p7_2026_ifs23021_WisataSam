@@ -1,9 +1,10 @@
 // lib/data/models/wisata_model.dart
 
-import '../../core/constants/api_constants.dart';
-
 /// Model data untuk Wisata Samosir.
-/// Gambar diakses via endpoint: GET /wisata/{id}/image
+/// Backend mengembalikan field:
+///   id, nama, slug, kategori, deskripsi, lokasi,
+///   jamBuka, kontak, pathGambar, createdAt, updatedAt
+/// Gambar diakses via: GET /wisata/{id}/image
 class WisataModel {
   const WisataModel({
     this.id,
@@ -25,7 +26,7 @@ class WisataModel {
   /// URL endpoint gambar: GET /wisata/{id}/image
   final String gambar;
 
-  /// Path relatif file di server (dari backend)
+  /// Path relatif file di server, contoh: "uploads/destinations/uuid.png"
   final String pathGambar;
 
   final String deskripsi;
@@ -39,15 +40,18 @@ class WisataModel {
   final int hargaTiket;
   final String? kontak;
 
+  static const String _baseUrl =
+      'https://pam-2026-p4-ifs23021-be.marshalll.fun:8080';
+
   factory WisataModel.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String?;
     final pathGambar = json['pathGambar'] as String? ?? '';
 
-    // Gunakan endpoint /wisata/{id}/image sebagai URL gambar
+    // Bangun URL gambar dari endpoint /wisata/{id}/image
     // karena backend melayani gambar via route, bukan file statis
     String gambar = '';
     if (id != null && id.isNotEmpty && pathGambar.isNotEmpty) {
-      gambar = '${ApiConstants.baseUrl}/wisata/$id/image';
+      gambar = '$_baseUrl/wisata/$id/image';
     }
 
     return WisataModel(
@@ -58,6 +62,7 @@ class WisataModel {
       deskripsi: json['deskripsi'] as String? ?? '',
       lokasi: json['lokasi'] as String? ?? '',
       kategori: json['kategori'] as String? ?? '',
+      // Backend menyimpan tips kunjungan di kolom jamBuka
       tipsKunjungan: json['jamBuka'] as String? ??
           json['tipsKunjungan'] as String? ??
           '',
